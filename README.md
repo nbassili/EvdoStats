@@ -1,5 +1,6 @@
-# EvdoStats
-A Prolog application for extracting statistics about books from the Evdoxus site
+               EvdoStats: EVDOXUS book statistics in Prolog
+A Prolog application for exporting statistics about book from the Evdoxus site
+==============================================================================
 
 - When you run the Program for the first time, you should run
 ?- init.
@@ -15,8 +16,9 @@ This incrementally caches the course pages of the new academic year.
 
 find_book(+BooksEvdoxusIDs,+AcademicYear,+Options).
 
-Provides statistics for a single or multiple books, i.e. at which Universities, Departments, Modules this book is distributed through Evdoxus,
-on-screen (optional) and stored at the file 'results.txt'.
+Provides statistics for a single or multiple books, i.e. at which Universities,
+Departments, Modules this book is distributed through Evdoxus, on-screen
+(optional) and stored at the file 'results.txt'.
 
 You provide either one Book ID in Evdoxus (no list), or a list of Books IDs.
 For a list of Books, statistics are aggregated for all books.
@@ -36,7 +38,8 @@ This is equivalent to find_book(BooksEvdoxusIDs,AcademicYear,[]).
 
 book_stats_year(+BooksEvdoxusIDs,+AcademicYear,-Stats,+Options).
 
-Returns at Stats argument the statistics about a book or a list of books aggregatively for an academic year, in the form:
+Returns at Stats argument the statistics about a book or a list of books
+aggregatively for an academic year, in the form:
 
 NoOfUniversities - NoOfDepartments - NoOfModules
 
@@ -48,10 +51,11 @@ Stats = 21-58-87.
 
 - When you want to find out the statistics for a book for several academic years:
 
-book_stats_year(+BooksEvdoxusIDs,+Year1,+Year2,-Stats,+Options).
+book_stats(+BooksEvdoxusIDs,+Year1,+Year2,-Stats,+Options).
 
-Returns at Stats argument the statistics about a book or a list of books aggregatively for all the academic years between Year1 and Year2, 
-in a list of the form:
+Returns at Stats argument the statistics about a book or a list of books
+aggregatively for all the academic years between Year1 and Year2, in a list of
+the form:
 
 [AcademicYear1/NoOfUniversities1-NoOfDepartments1-NoOfModules1, ..., AcademicYearN/NoOfUniversitiesN-NoOfDepartmentsN-NoOfModulesN]
 
@@ -62,13 +66,112 @@ e.g.
 ?- book_stats(['94700120','12867416'],2019,2023,Stats,[cache]).
 Stats = [2019-2020/(20-42-64), 2020-2021/(21-49-77), 2021-2022/(20-54-87), 2022-2023/(21-58-87)].
 
-- When you want to compare the the statistics for a book for two academic years, i.e. which Universities/Departments/Modules have been added in the second academic year compared to the first and which Universities/Departments/Modules in the first academic year have been deleted from the second:
+- When you want to compare the statistics for a book for two academic years,
+i.e. which Universities/Departments/Modules have been added in the second
+academic year compared to the first and which Universities/Departments/Modules
+in the first academic year have been deleted from the second:
 
 compare_years(+BooksEvdoxusIDs,+AcademicYear1, +AcademicYear2, +Options)
 
-Provides comparative details and statistics for a single or multiple books (aggregatively) between two (not necessarily consecutive) academic years, i.e. which Universities/Departments/Modules have been added in the second academic year compared to the first and which Universities/Departments/Modules in the first academic year have been deleted from the second, on-screen (optional) and stored at the file 'comp-results.txt'.
+Provides comparative details and statistics for a single or multiple books
+(aggregatively) between two (not necessarily consecutive) academic years, i.e.
+which Universities/Departments/Modules have been added in the second academic
+year compared to the first and which Universities/Departments/Modules in the
+first academic year have been deleted from the second, on-screen (optional) and
+stored at the file 'comp-results.txt'.
 
 The arguments have exactly the same meaning as with find_book/3.
 
 e.g. 
 ?- compare_years('94700120',2021-2022,2022-2023,[cache]).
+
+- When you want to retrieve (in lists) the statistics for a book for two
+academic years, i.e. which Universities (including details about Departments/
+Modules) have been added in the second academic year compared to the first and
+which Universities (including details about Departments/Modules) in the first
+academic year have been deleted from the second:
+
+compare_years_univ_list(+BooksEvdoxusIDs, +AcademicYear1, +AcademicYear2, -Deleted, -Added, +Options)
+
+Provides comparative statistics for multiple books (aggregatively) between two
+(not necessarily consecutive) academic years, about which Universities
+(including details about Departments/Modules) have been added in the second
+academic year compared to the first and which Universities (including details
+about Departments/Modules) in the first academic year have been deleted from the
+second, returning two lists Added and Deleted.
+
+The arguments have exactly the same meaning as with find_book/3.
+
+e.g. 
+?- compare_years_univ_list(['94700120'],2021-2022,2022-2023,L1,L2,[cache]).
+L1 = [],
+L2 = ['ехмийо летсобио покутевмеио'-'лгвамийым летаккеиым летаккоуяцым'-1/
+["тевмгтг моглосумг йаи акцояихлои лгвамийгс ейлахгсгс "]].
+
+This means that no University has been deleted and one has been added (with the
+specific Department and Module).
+
+- When you want to retrieve (in lists) the statistics for a book for two
+academic years, i.e. which Departments (including details about University/
+Modules) have been added in the second academic year compared to the first and
+which Departments (including details about University/Modules) in the first
+academic year have been deleted from the second:
+
+compare_years_dept_list(+BooksEvdoxusIDs, +AcademicYear1, +AcademicYear2, -Deleted, -Added, +Options)
+
+Provides comparative statistics for multiple books (aggregatively) between two
+(not necessarily consecutive) academic years, about which Departments
+(including details about University/Modules) have been added in the second
+academic year compared to the first and which Departments (including details
+about University/Modules) in the first academic year have been deleted from the
+second, returning two lists Added and Deleted.
+
+The arguments have exactly the same meaning as with find_book/3.
+
+e.g. 
+?- compare_years_dept_list(['94700120'],2021-2022,2022-2023,L1,L2,[cache]).
+L1 = [],
+L2 = ['ехмийо & йаподистяиайо памепистглио ахгмым'-'лахглатийым'-1/["тевмгтг моглосумг"], 
+'ехмийо летсобио покутевмеио'-'лгвамийым летаккеиым летаккоуяцым'-1/["тевмгтг моглосумг йаи акцояихлои лгвамийгс ейлахгсгс "],
+'памепистглио аицаиоу'-'лгвамийым сведиасгс пяоиомтым йаи сустглатым'-1/["тЕВМГТч мОГЛОСЩМГ"], 
+'памепистглио пекопоммгсоу'-'жусийохеяапеиас'-1/["еужуг сустглата меым тевмокоциым"]].
+
+This means that no Department has been deleted and 4 have been added (from the
+specific Universities and with the specific Modules).
+
+- When you want to retrieve (in lists) the statistics for a book for two
+academic years, i.e. which Modules (including details about University/
+Department) have been added in the second academic year compared to the first and
+which Modules (including details about University/Department) in the first
+academic year have been deleted from the second:
+
+compare_years_module_list(+BooksEvdoxusIDs, +AcademicYear1, +AcademicYear2, -Deleted, -Added, +Options)
+
+Provides comparative statistics for multiple books (aggregatively) between two
+(not necessarily consecutive) academic years, about which Modules
+(including details about University/Department) have been added in the second
+academic year compared to the first and which Modules (including details
+about University/Department) in the first academic year have been deleted from the
+second, returning two lists Added and Deleted.
+
+The arguments have exactly the same meaning as with find_book/3.
+
+e.g. 
+?- compare_years_module_list(['94700120'],2021-2022,2022-2023,L1,L2,[cache]).
+L1 = ['ехмийо & йаподистяиайо памепистглио ахгмым'-'диоийгсгс епивеиягсеым йаи ояцамислым'-1/["тевмгтг моглосумг"], 
+'ехмийо & йаподистяиайо памепистглио ахгмым'-'пкгяожояийгс йаи тгкепийоимымиым'-1/["гкейтяолацмгтислос-оптийг-суцвяомг жусийг"], 
+'еккгмийо лесоцеиайо памепистглио'-'гкейтяомийым лгвамийым'-2/["еУЖУч сУСТчЛАТА еКщЦВОУ (х)", "еУЖУч сУСТчЛАТА еКщЦВОУ (х & е)"], 
+'памепистглио дутийгс лайедомиас'-'лгвамийым сведиасгс пяозомтым йаи сустглатым'-1/["еисацыцг стгм тевмгтг моглосумг(дгкыметаи ломо апо жоитгтес тоу теи- бс)"], 
+'памепистглио хессакиас'-'ьгжиайым сустглатым'-1/["тЕВМГТч мОГЛОСЩМГ ЙАИ ╦ЛПЕИЯА сУСТчЛАТА"], 
+'памепистглио лайедомиас'-'ежаялослемгс пкгяожояийгс'-1/["гхийг йаи диайубеямгсг тевмгтгс моглосумгс"], 
+'покутевмеио йягтгс'-'гкейтяокоцым лгвамийым йаи лгвамийым упокоцистым'-1/[...], ... - ... - ... / ...],
+L2 = ['ехмийо & йаподистяиайо памепистглио ахгмым'-'лахглатийым'-1/["тевмгтг моглосумг"], 
+'ехмийо летсобио покутевмеио'-'лгвамийым летаккеиым летаккоуяцым'-1/["тевмгтг моглосумг йаи акцояихлои лгвамийгс ейлахгсгс"], 
+'памепистглио аицаиоу'-'лгвамийым сведиасгс пяоиомтым йаи сустглатым'-1/["тЕВМГТч мОГЛОСЩМГ"], 
+'памепистглио пекопоммгсоу'-'жусийохеяапеиас'-1/["еужуг сустглата меым тевмокоциым"], 
+'ехмийо & йаподистяиайо памепистглио ахгмым'-'диоийгсгс епивеиягсеым йаи ояцамислым'-1/["тевмгтг моглосумг йаи диоийгсг"], 
+'еккгмийо лесоцеиайо памепистглио'-'гкейтяокоцым лгвамийым йаи лгвамийым упокоцистым'-1/["лГВАМИЙч лэХГСГ ЙАИ еНЭЯУНГ цМЧСГР"], 
+'памепистглио дутийгс лайедомиас'-'лгвамийым сведиасгс пяозомтым йаи сустглатым'-1/[...], ... - ... - ... / ..., ... - ...].
+
+
+This means that 9 Modules have been deleted and 9 have been added (from the specific Universities and Departments).

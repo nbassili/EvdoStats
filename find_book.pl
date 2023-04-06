@@ -39,8 +39,8 @@ find_book_list(Bs,AcadYear,List,Options) :-
 		(Cache == yes ->
 			(cached_course(University,Department,CourseFileName,CourseName),
 			 string_concat("cache/",CourseFileName,CourseFilePath),
-	        	 open(CourseFilePath,read,In,[encoding(utf8)]));
-	        	(course(University,Department,CourseURL,CourseName),
+			 open(CourseFilePath,read,In,[encoding(utf8)]));
+			(course(University,Department,CourseURL,CourseName),
 			 http_open(CourseURL,In,[]))
 	        ),
 		load_structure(In, HTML, [ dtd(DTD), dialect(sgml), shorttag(false), max_errors(-1),syntax_errors(quiet),encoding('utf-8') ]),
@@ -49,8 +49,8 @@ find_book_list(Bs,AcadYear,List,Options) :-
 		member(B,Bs),
 		atomic_list_concat(['[',B,']'],Book),
 		bagof(ModuleName,Ind^Result^Module^(xpath(Body, //ol(index(Ind))/li/ul/li(contains(text,Book)), Result),
-				xpath(Body,//h2(index(Ind),text(string)),Module),
-				get_module_name(Module,ModuleName)	),
+				     		    xpath(Body,//h2(index(Ind),normalize_space),Module),
+						    get_module_name(Module,ModuleName)	),
 			Modules),
 		length(Modules,N),
 		(Silent == yes -> true; writelist(user,[University-Department-N/Modules]))
@@ -88,34 +88,40 @@ collect_two_years(Bs, AcYear1, AcYear2, List1, List2, Options) :-
 	find_book_list(Bs, AcYear1, List1, [silent|Options]),
 	find_book_list(Bs, AcYear2, List2, [silent|Options]).
 
+
 compare_years_module_list(Bs, Year1, Year2, Deleted, Added, Options) :-
 	collect_two_years(Bs, Year1, Year2, List1, List2, Options),
 	find_differences_module(List1,List2,Deleted),
 	find_differences_module(List2,List1,Added).
 
+
 find_differences_module(List1,List2,AllDiffs) :-
 	find_differences_dept(List1,List2,DeptDiffs),
 	findall(U-D-NDiff/ModDiffs,
-			(member(U-D-_N1/M1,List1), 
-			 member(U-D-_N2/M2,List2), 
+			(member(U-D-_N1/M1,List1),
+			 member(U-D-_N2/M2,List2),
 			 findall(Mod,(member(Mod,M1), not(member(Mod,M2))),ModDiffs),
-			 length(ModDiffs,NDiff), 
+			 length(ModDiffs,NDiff),
 			 NDiff>0),
 			RestDiffs),
 	append(DeptDiffs,RestDiffs,AllDiffs).
-	
+
+
 compare_years_dept_list(Bs, Year1, Year2, Deleted, Added, Options) :-
 	collect_two_years(Bs, Year1, Year2, List1, List2, Options),
 	find_differences_dept(List1,List2,Deleted),
 	find_differences_dept(List2,List1,Added).
 
+
 find_differences_dept(List1,List2,Diffs) :-
 	findall(U-D-N/M,(member(U-D-N/M,List1), not(member(U-D-_/_,List2))),Diffs).
+
 
 compare_years_univ_list(Bs, Year1, Year2, Deleted, Added, Options) :-
 	collect_two_years(Bs, Year1, Year2, List1, List2, Options),
 	find_differences_univ(List1,List2,Deleted),
 	find_differences_univ(List2,List1,Added).
+
 
 find_differences_univ(List1,List2,Diffs) :-
 	findall(U-D-N/M,(member(U-D-N/M,List1), not(member(U-_-_/_,List2))),Diffs).
@@ -138,8 +144,8 @@ compare_years(Bs, Year1, Year2, Options) :-
 	calc_total_results(DeptAdded,_,NoOfDepartmentsA,_),
 	calc_total_results(ModDeleted,_,_,NoOfModulesD),
 	calc_total_results(ModAdded,_,_,NoOfModulesA),
-	(Silent == yes -> 
-		true; 
+	(Silent == yes ->
+		true;
 		write_comparison_results(user,UDeleted,DeptDeleted,ModDeleted,NoOfUniversitiesD,NoOfDepartmentsD,NoOfModulesD,UAdded,DeptAdded,ModAdded,NoOfUniversitiesA,NoOfDepartmentsA,NoOfModulesA)),
 	write_comparison_results('comp-results.txt',UDeleted,DeptDeleted,ModDeleted,NoOfUniversitiesD,NoOfDepartmentsD,NoOfModulesD,UAdded,DeptAdded,ModAdded,NoOfUniversitiesA,NoOfDepartmentsA,NoOfModulesA).
 
@@ -150,14 +156,8 @@ get_module_name(ModuleIn,ModuleOut) :-
 	sub_string(ModuleIn,B,_L,A,":"),
 	B1 is B+2,
 	A1 is A - 1,
+	A1 >= 0,
 	sub_string(ModuleIn,B1,A1,0,ModuleOut).
-
-writelist([]).
-writelist([U-D-N/Modules|T]) :-
-	write('ΤΜΗΜΑ '), write(D), write(', '),
-	write(U),  write(', '),
-	write("Μαθήματα ("), write(N), write('): '), write_shortlist(Modules), nl,
-	writelist(T).
 
 write_shortlist([H]) :-
 	write(H),
@@ -203,8 +203,8 @@ inc_cache_one_course(CourseURL,LocalCourseFile,Cached) :-
 	string_concat(StringLastPart,".html",LocalCourseFile),
 	string_concat("cache/",LocalCourseFile,LocalCourseFilePath),
 	(exists_file(LocalCourseFilePath)
-	  -> 
-	  	Cached=false ;
+	  ->
+		Cached=false ;
 		( http_open(CourseURL,In,[]),
 		  open(LocalCourseFilePath,write,Out,[encoding(iso_latin_1)]),
 		  copy_stream_data(In, Out),
@@ -212,7 +212,7 @@ inc_cache_one_course(CourseURL,LocalCourseFile,Cached) :-
 		  close(Out),
 		  Cached=true
 		 )
-	), 
+	),
 	!.
 
 cache_courses :-
@@ -270,7 +270,7 @@ calc_total_results(List,NoOfUniversities,NoOfDepartments,NoOfModules) :-
 	sumlist(ModuleList,NoOfModules).
 
 write_total_results(S,NoOfUniversities,NoOfDepartments,NoOfModules) :-
-	nl(S), 
+	nl(S),
 	(nonvar(NoOfUniversities) -> (write(S,"Συνολικός Αριθμός Πανεπιστημίων: "), write(S,NoOfUniversities), nl(S))),
 	(nonvar(NoOfDepartments) -> (write(S,"Συνολικός Αριθμός Τμημάτων: "), write(S,NoOfDepartments), nl(S))),
 	(nonvar(NoOfModules) -> (write(S,"Συνολικός Αριθμός Μαθημάτων: "), write(S,NoOfModules), nl(S))).
@@ -302,7 +302,7 @@ extract courses from web page directly
 
 init :-
 	( exists_file('courses.pl') ->
-		copy_file('courses.pl','courses-old.pl'); 
+		copy_file('courses.pl','courses-old.pl');
 		true),
 	( exists_file('cached_courses.pl') ->
 		copy_file('cached_courses.pl','cached_courses-old.pl');
@@ -319,7 +319,7 @@ init :-
 
 new_year :-
 	( exists_file('courses.pl') ->
-		copy_file('courses.pl','courses-old.pl'); 
+		copy_file('courses.pl','courses-old.pl');
 		true),
 	( exists_file('cached_courses.pl') ->
 		copy_file('cached_courses.pl','cached_courses-old.pl');
@@ -345,7 +345,7 @@ extract_course_list(List) :-
 		    extract_content(X,ElName,Content)
 		),
 		List).
-		
+
 extract_content(element(h2,[],SubTree),h2,UnivName) :- !,
 	xpath(element(h2,[],SubTree),/self(normalize_space),UnivName).
 extract_content(element(p,[],SubTree),p,DeptName) :- !,
