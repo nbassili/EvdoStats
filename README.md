@@ -5,19 +5,19 @@ A Prolog application for exporting statistics about book from the Evdoxus site
 
 - (1) When you run the Program for the first time, you should run
 
-	init.
+	 ?- init.
 
 This initializes the cache, downloading all course pages.
 
 - (2) Each year, you should run 
 
-	new_year.
+	 ?- new_year.
 
 This incrementally caches the course pages of the new academic year.
 
 - (3) When you want to see details and statistics for a book for a specific academic year:
 
-	find_book(+BooksEvdoxusIDs,+AcademicYear,+Options).
+	 find_book(+BooksEvdoxusIDs,+AcademicYear,+Options).
 
 Provides statistics for a single or multiple books, i.e. at which Universities,
 Departments, Modules this book is distributed through Evdoxus, on-screen
