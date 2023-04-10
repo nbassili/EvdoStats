@@ -1,4 +1,4 @@
-               EvdoStats: EVDOXUS book statistics in Prolog
+EvdoStats: EVDOXUS book statistics in Prolog
 A Prolog application for exporting statistics about book from the Evdoxus site
 ==============================================================================
 
