@@ -5,19 +5,22 @@ A Prolog application for exporting statistics about book from the Evdoxus site
 
 - (1) When you run the Program for the first time, you should run
 
-	 ?- init.
+
+	?- init.
 
 This initializes the cache, downloading all course pages.
 
 - (2) Each year, you should run 
 
-	 ?- new_year.
+
+	?- new_year.
 
 This incrementally caches the course pages of the new academic year.
 
 - (3) When you want to see details and statistics for a book for a specific academic year:
 
-	 find_book(+BooksEvdoxusIDs,+AcademicYear,+Options).
+
+	find_book(+BooksEvdoxusIDs,+AcademicYear,+Options).
 
 Provides statistics for a single or multiple books, i.e. at which Universities,
 Departments, Modules this book is distributed through Evdoxus, on-screen
@@ -46,6 +49,7 @@ This is equivalent to find_book(BooksEvdoxusIDs,AcademicYear,[]).
 
 - (4) When you want to find out only the statistics for a book for a specific academic year:
 
+
 	book_stats_year(+BooksEvdoxusIDs,+AcademicYear,-Stats,+Options).
 
 Returns at Stats argument the statistics about a book or a list of books
@@ -59,6 +63,7 @@ e.g.
 	Stats = 21-58-87.
 
 - (5) When you want to find out the statistics for a book for several academic years:
+
 
 	book_stats(+BooksEvdoxusIDs,+Year1,+Year2,-Stats,+Options).
 
@@ -80,6 +85,7 @@ e.g.
 i.e. which Universities/Departments/Modules have been added in the second
 academic year compared to the first and which Universities/Departments/Modules
 in the first academic year have been deleted from the second:
+
 
 	compare_years(+BooksEvdoxusIDs,+AcademicYear1, +AcademicYear2, +Options).
 
@@ -103,6 +109,7 @@ academic years, i.e. which Universities (including details about Departments/
 Modules) have been added in the second academic year compared to the first and
 which Universities (including details about Departments/Modules) in the first
 academic year have been deleted from the second:
+
 
 	compare_years_univ_list(+BooksEvdoxusIDs, +AcademicYear1, +AcademicYear2, -Deleted, -Added, +Options).
 
@@ -130,6 +137,7 @@ academic years, i.e. which Departments (including details about University/
 Modules) have been added in the second academic year compared to the first and
 which Departments (including details about University/Modules) in the first
 academic year have been deleted from the second:
+
 
 	compare_years_dept_list(+BooksEvdoxusIDs, +AcademicYear1, +AcademicYear2, -Deleted, -Added, +Options).
 
@@ -159,6 +167,7 @@ academic years, i.e. which Modules (including details about University/
 Department) have been added in the second academic year compared to the first and
 which Modules (including details about University/Department) in the first
 academic year have been deleted from the second:
+
 
 	compare_years_module_list(+BooksEvdoxusIDs, +AcademicYear1, +AcademicYear2, -Deleted, -Added, +Options).
 
@@ -193,6 +202,7 @@ This means that 9 Modules have been deleted and 9 have been added (from the spec
 
 - (10) When you want to compare details and statistics for multiple books for a specific academic year:
 
+
 	compare_books(+ListofListsOfBookIDs,+AcademicYear,+Options).
 	
 ListofListsOfBookIDs is a list of lists. Each inner list is a list of Book IDs 
@@ -211,7 +221,8 @@ e.g.
 
 - (11) When you want to compare statistics for multiple books for a specific academic year:
 
-	 compare_books_stats(+ListofListsOfBookIDs,+AcademicYear,-Stats,+Options).
+
+	compare_books_stats(+ListofListsOfBookIDs,+AcademicYear,-Stats,+Options).
 	 
 The meaning of all arguments is exactly as in compare_books/3, except for Stats,
 which is the variable where the result (a list) of the aggregative statistics of all book groups 
