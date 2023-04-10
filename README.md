@@ -2,23 +2,23 @@
 A Prolog application for exporting statistics about book from the Evdoxus site
 ==============================================================================
 
-- When you run the Program for the first time, you should run
+(1) When you run the Program for the first time, you should run
 ?- init.
 
 This initializes the cache, downloading all course pages.
 
-- Each year, you should run 
+(2) Each year, you should run 
 ?- new_year.
 
 This incrementally caches the course pages of the new academic year.
 
-- When you want to see details and statistics for a book for a specific academic year:
+(3) When you want to see details and statistics for a book for a specific academic year:
 
 find_book(+BooksEvdoxusIDs,+AcademicYear,+Options).
 
 Provides statistics for a single or multiple books, i.e. at which Universities,
 Departments, Modules this book is distributed through Evdoxus, on-screen
-(optional) and stored at the file 'results.txt'.
+(optional) and stored at a file with name 'results-<<AcademicYear>>-<<BooksEvdoxusIDs>>.txt'.
 
 You provide either one Book ID in Evdoxus (no list), or a list of Books IDs.
 For a list of Books, statistics are aggregated for all books.
@@ -30,11 +30,13 @@ Options is a list (possibly empty) containing the following:
 e.g. ?- find_book('94700120',2022-2023,[cache,silent]).
 or   ?- find_book(['94700120'],2022-2023,[cache,silent]).
 
+(The filename that results are stored is 'results-2022-2023-94700120.txt').
+
 ?- find_book(BooksEvdoxusIDs,AcademicYear).
 
 This is equivalent to find_book(BooksEvdoxusIDs,AcademicYear,[]).
 
-- When you want to find out only the statistics for a book for a specific academic year:
+(4) When you want to find out only the statistics for a book for a specific academic year:
 
 book_stats_year(+BooksEvdoxusIDs,+AcademicYear,-Stats,+Options).
 
@@ -49,7 +51,7 @@ e.g.
 ?- book_stats_year('94700120',2022-2023,Stats,[cache]).
 Stats = 21-58-87.
 
-- When you want to find out the statistics for a book for several academic years:
+(5) When you want to find out the statistics for a book for several academic years:
 
 book_stats(+BooksEvdoxusIDs,+Year1,+Year2,-Stats,+Options).
 
@@ -66,7 +68,7 @@ e.g.
 ?- book_stats(['94700120','12867416'],2019,2023,Stats,[cache]).
 Stats = [2019-2020/(20-42-64), 2020-2021/(21-49-77), 2021-2022/(20-54-87), 2022-2023/(21-58-87)].
 
-- When you want to compare the statistics for a book for two academic years,
+(6) When you want to compare the statistics for a book for two academic years,
 i.e. which Universities/Departments/Modules have been added in the second
 academic year compared to the first and which Universities/Departments/Modules
 in the first academic year have been deleted from the second:
@@ -78,14 +80,16 @@ Provides comparative details and statistics for a single or multiple books
 which Universities/Departments/Modules have been added in the second academic
 year compared to the first and which Universities/Departments/Modules in the
 first academic year have been deleted from the second, on-screen (optional) and
-stored at the file 'comp-results.txt'.
+stored at a file with name 'comp-results-<<AcademicYear1>>-<<AcademicYear2>>-<<BooksEvdoxusIDs>>.txt'.
 
 The arguments have exactly the same meaning as with find_book/3.
 
 e.g. 
 ?- compare_years('94700120',2021-2022,2022-2023,[cache]).
 
-- When you want to retrieve (in lists) the statistics for a book for two
+(The filename that the results are stored is 'comp-results-2021-2022-2022-2023-94700120.txt')
+
+(7) When you want to retrieve (in lists) the statistics for a book for two
 academic years, i.e. which Universities (including details about Departments/
 Modules) have been added in the second academic year compared to the first and
 which Universities (including details about Departments/Modules) in the first
@@ -111,7 +115,7 @@ L2 = ['ΕΘΝΙΚΟ ΜΕΤΣΟΒΙΟ ΠΟΛΥΤΕΧΝΕΙΟ'-'ΜΗΧΑΝΙΚΩΝ
 This means that no University has been deleted and one has been added (with the
 specific Department and Module).
 
-- When you want to retrieve (in lists) the statistics for a book for two
+(8) When you want to retrieve (in lists) the statistics for a book for two
 academic years, i.e. which Departments (including details about University/
 Modules) have been added in the second academic year compared to the first and
 which Departments (including details about University/Modules) in the first
@@ -139,7 +143,7 @@ L2 = ['ΕΘΝΙΚΟ & ΚΑΠΟΔΙΣΤΡΙΑΚΟ ΠΑΝΕΠΙΣΤΗΜΙΟ ΑΘΗ
 This means that no Department has been deleted and 4 have been added (from the
 specific Universities and with the specific Modules).
 
-- When you want to retrieve (in lists) the statistics for a book for two
+(9) When you want to retrieve (in lists) the statistics for a book for two
 academic years, i.e. which Modules (including details about University/
 Department) have been added in the second academic year compared to the first and
 which Modules (including details about University/Department) in the first
@@ -173,5 +177,34 @@ L2 = ['ΕΘΝΙΚΟ & ΚΑΠΟΔΙΣΤΡΙΑΚΟ ΠΑΝΕΠΙΣΤΗΜΙΟ ΑΘΗ
 'ΕΛΛΗΝΙΚΟ ΜΕΣΟΓΕΙΑΚΟ ΠΑΝΕΠΙΣΤΗΜΙΟ'-'ΗΛΕΚΤΡΟΛΟΓΩΝ ΜΗΧΑΝΙΚΩΝ ΚΑΙ ΜΗΧΑΝΙΚΩΝ ΥΠΟΛΟΓΙΣΤΩΝ'-1/["Μηχανική Μάθηση και Εξόρυξη Γνώσης"], 
 'ΠΑΝΕΠΙΣΤΗΜΙΟ ΔΥΤΙΚΗΣ ΜΑΚΕΔΟΝΙΑΣ'-'ΜΗΧΑΝΙΚΩΝ ΣΧΕΔΙΑΣΗΣ ΠΡΟΪΟΝΤΩΝ ΚΑΙ ΣΥΣΤΗΜΑΤΩΝ'-1/[...], ... - ... - ... / ..., ... - ...].
 
-
 This means that 9 Modules have been deleted and 9 have been added (from the specific Universities and Departments).
+
+(10) When you want to compare details and statistics for multiple books for a specific academic year:
+
+	compare_books(+ListofListsOfBookIDs,+AcademicYear,+Options).
+	
+	ListofListsOfBookIDs is a list of lists. Each inner list is a list of Book IDs 
+	whose details and statistics are aggregated (as in e.g. find_book/3).
+    The rest of the arguments are exactly as in find_book/3.
+    The purpose of this predicate is to compare the "performance" of various books (or book groups) 
+	against each other, much the same way as in running multiple times the find_book/3 predicate.
+	The results are shown on-screen, unless options silent is used, and stored at a file with name 
+	'mult-results-<<AcademicYear>>-<<ListofListsOfBookIDs>>.txt'.
+
+e.g. 
+?- compare_books([['94700120'],['102070469','13909']],2022-2023,[cache]).
+
+(The filename that the results are stored is 'mult-results-2022-2023-94700120-102070469-13909.txt')
+
+(11) When you want to compare statistics for multiple books for a specific academic year:
+
+	 compare_books_stats(+ListofListsOfBookIDs,+AcademicYear,-Stats,+Options).
+	 
+	 The meaning of all arguments is exactly as in compare_books/3, except for Stats,
+	 which is the variable where the result (a list) of the aggregative statistics of all book groups 
+	 is returned. Each member of the Stats list has the format NumberOfUniversities-NumberOfDepartments-NumberOfModules.
+
+e.g.
+?- compare_books_stats([['94700120'],['102070469','13909']],2022-2023,S,[cache]).
+S = [21-58-87, 19-61-89].
+

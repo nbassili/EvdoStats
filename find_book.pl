@@ -20,11 +20,15 @@ find_book(B,AcadYear,Options) :-
 	not(is_list(B)), !,
 	find_book([B],AcadYear,Options).
 find_book(Bs,AcadYear,Options) :-
-	find_book_list(Bs,AcadYear,List,Options),
 	(member(silent,Options) -> Silent = yes; Silent = no),
+	(Silent == yes -> true; (write('Book(s): '), write(Bs), nl, nl)),
+	find_book_list(Bs,AcadYear,List,Options),
 	calc_total_results(List,NoOfUniversities,NoOfDepartments,NoOfModules),
 	(Silent == yes -> true; write_total_results(user,NoOfUniversities,NoOfDepartments,NoOfModules)),
-	write_results('results.txt',List,NoOfUniversities,NoOfDepartments,NoOfModules), !.
+	AcadYear =.. ['-',Year1,Year2],
+	atomic_list_concat([results,Year1,Year2|Bs],'-',FileName),
+	atom_concat(FileName,'.txt',File),
+	write_results(File,Bs,List,NoOfUniversities,NoOfDepartments,NoOfModules), !.
 
 find_book(Bs,AcadYear) :-
 	find_book(Bs,AcadYear,[]).
@@ -146,11 +150,50 @@ compare_years(Bs, Year1, Year2, Options) :-
 	calc_total_results(ModAdded,_,_,NoOfModulesA),
 	(Silent == yes ->
 		true;
-		write_comparison_results(user,UDeleted,DeptDeleted,ModDeleted,NoOfUniversitiesD,NoOfDepartmentsD,NoOfModulesD,UAdded,DeptAdded,ModAdded,NoOfUniversitiesA,NoOfDepartmentsA,NoOfModulesA)),
-	write_comparison_results('comp-results.txt',UDeleted,DeptDeleted,ModDeleted,NoOfUniversitiesD,NoOfDepartmentsD,NoOfModulesD,UAdded,DeptAdded,ModAdded,NoOfUniversitiesA,NoOfDepartmentsA,NoOfModulesA).
+		write_comparison_results(user,Bs,UDeleted,DeptDeleted,ModDeleted,NoOfUniversitiesD,NoOfDepartmentsD,NoOfModulesD,UAdded,DeptAdded,ModAdded,NoOfUniversitiesA,NoOfDepartmentsA,NoOfModulesA)),
+	Year1 =.. ['-',Year1a,Year1b],
+	Year2 =.. ['-',Year2a,Year2b],
+	atomic_list_concat(['comp-results',Year1a,Year1b,Year2a,Year2b|Bs],'-',FileName),
+	atom_concat(FileName,'.txt',File),
+	write_comparison_results(File,Bs, UDeleted,DeptDeleted,ModDeleted,NoOfUniversitiesD,NoOfDepartmentsD,NoOfModulesD,UAdded,DeptAdded,ModAdded,NoOfUniversitiesA,NoOfDepartmentsA,NoOfModulesA).
 
 compare_years(B, Year1, Year2) :-
 	compare_years(B, Year1, Year2, []).
+
+% :- compare_books([['94700120'],['102070469','13909']],2022-2023,[cache]).
+% 
+compare_books(Bs, AcadYear, Options) :-
+	compare_books_aux(Bs, AcadYear, Options, ListOfLists, ListOfUDM),
+	AcadYear =.. ['-',Year1,Year2],
+	flatten(Bs,Books),
+	atomic_list_concat(['mult-results',Year1,Year2|Books],'-',FileName),
+	atom_concat(FileName,'.txt',File),
+	write_mult_results(File,Bs, ListOfLists,ListOfUDM), !.
+
+compare_books_aux([], _AcadYear, _Options, [], []).
+compare_books_aux([B|RestB], AcadYear, Options, [List1|RestLoL], [NoOfUniversities-NoOfDepartments-NoOfModules|RestUDM]) :-
+	(member(silent,Options) -> Silent = yes; Silent = no),
+	(Silent == yes -> true; (nl, write("Book(s) : "), write(B), nl)),
+	find_book_list(B, AcadYear, List1, Options),
+	calc_total_results(List1,NoOfUniversities,NoOfDepartments,NoOfModules),
+	(Silent == yes -> true; write_total_results(user,NoOfUniversities,NoOfDepartments,NoOfModules)),
+	compare_books_aux(RestB, AcadYear, Options, RestLoL, RestUDM).
+
+compare_books_stats(Bs, AcadYear, ListOfUDM, Options) :-
+	compare_books_aux(Bs, AcadYear, [silent|Options], _ListOfLists, ListOfUDM).
+
+
+write_mult_results(File,Bs, ListOfLists,ListOfUDM) :-
+	open(File,write,Res,[encoding(utf8)]),
+	write_mult_results_aux(Res,Bs, ListOfLists,ListOfUDM),
+	close(Res).
+
+write_mult_results_aux(_File,[],[],[]).
+write_mult_results_aux(File,[B|RestB],[List|RListOfLists],[U-D-M|RListOfUDM]) :-
+	nl(File), write(File,"Book(s) : "), write(File,B), nl(File),
+	writelist(File,List),
+	write_total_results(File,U,D,M),
+	write_mult_results_aux(File,RestB,RListOfLists,RListOfUDM).
 
 get_module_name(ModuleIn,ModuleOut) :-
 	sub_string(ModuleIn,B,_L,A,":"),
@@ -255,8 +298,9 @@ strings_to_atoms([S|RestS],[A|RestA]) :-
 	atom_string(A,S),
 	strings_to_atoms(RestS,RestA).
 
-write_results(File,List,NoOfUniversities,NoOfDepartments,NoOfModules) :-
+write_results(File,Bs,List,NoOfUniversities,NoOfDepartments,NoOfModules) :-
 	open(File,write,Res,[encoding(utf8)]),
+	write(Res,'Book(s): '), write(Res,Bs), nl(Res), nl(Res), 
 	writelist(Res,List),
 	write_total_results(Res,NoOfUniversities,NoOfDepartments,NoOfModules),
 	close(Res).
@@ -275,25 +319,26 @@ write_total_results(S,NoOfUniversities,NoOfDepartments,NoOfModules) :-
 	(nonvar(NoOfDepartments) -> (write(S,"Συνολικός Αριθμός Τμημάτων: "), write(S,NoOfDepartments), nl(S))),
 	(nonvar(NoOfModules) -> (write(S,"Συνολικός Αριθμός Μαθημάτων: "), write(S,NoOfModules), nl(S))).
 
-write_comparison_results(File,UDeleted,DeptDeleted,ModDeleted,NoOfUniversitiesD,NoOfDepartmentsD,NoOfModulesD,UAdded,DeptAdded,ModAdded,NoOfUniversitiesA,NoOfDepartmentsA,NoOfModulesA) :-
-		(File == user -> S = user; open(File,write,S,[encoding(utf8)])),
-		nl(S), write(S,'Αφαιρέθηκαν:'), nl(S), nl(S),
-		write(S,'Πανεπιστήμια:'), nl(S),
-		writelist(S,UDeleted), nl(S),
-		write(S,'Τμήματα:'), nl(S),
-		writelist(S,DeptDeleted), nl(S),
-		write(S,'Μαθήματα:'), nl(S),
-		writelist(S,ModDeleted),
-	    write_total_results(S,NoOfUniversitiesD,NoOfDepartmentsD,NoOfModulesD),
-		nl(S), write(S,'Προστέθηκαν:'),  nl(S), nl(S),
-		write(S,'Πανεπιστήμια:'), nl(S),
-		writelist(S,UAdded), nl(S),
-		write(S,'Τμήματα:'), nl(S),
-		writelist(S,DeptAdded), nl(S),
-		write(S,'Μαθήματα:'), nl(S),
-		writelist(S,ModAdded),
-	    write_total_results(S,NoOfUniversitiesA,NoOfDepartmentsA,NoOfModulesA), nl(S),
-		(S == user -> true; close(S)).
+write_comparison_results(File,Bs,UDeleted,DeptDeleted,ModDeleted,NoOfUniversitiesD,NoOfDepartmentsD,NoOfModulesD,UAdded,DeptAdded,ModAdded,NoOfUniversitiesA,NoOfDepartmentsA,NoOfModulesA) :-
+	(File == user -> S = user; open(File,write,S,[encoding(utf8)])),
+	write(S,'Book(s): '), write(S,Bs), nl(S), nl(S), 
+	nl(S), write(S,'Αφαιρέθηκαν:'), nl(S), nl(S),
+	write(S,'Πανεπιστήμια:'), nl(S),
+	writelist(S,UDeleted), nl(S),
+	write(S,'Τμήματα:'), nl(S),
+	writelist(S,DeptDeleted), nl(S),
+	write(S,'Μαθήματα:'), nl(S),
+	writelist(S,ModDeleted),
+	write_total_results(S,NoOfUniversitiesD,NoOfDepartmentsD,NoOfModulesD),
+	nl(S), write(S,'Προστέθηκαν:'),  nl(S), nl(S),
+	write(S,'Πανεπιστήμια:'), nl(S),
+	writelist(S,UAdded), nl(S),
+	write(S,'Τμήματα:'), nl(S),
+	writelist(S,DeptAdded), nl(S),
+	write(S,'Μαθήματα:'), nl(S),
+	writelist(S,ModAdded),
+	write_total_results(S,NoOfUniversitiesA,NoOfDepartmentsA,NoOfModulesA), nl(S),
+	(S == user -> true; close(S)).
 
 /*
 extract courses from web page directly
