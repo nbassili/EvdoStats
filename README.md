@@ -3,19 +3,19 @@ EvdoStats: EVDOXUS book statistics in Prolog
 A Prolog application for exporting statistics about book from the Evdoxus site
 ==============================================================================
 
-(1) When you run the Program for the first time, you should run
+- (1) When you run the Program for the first time, you should run
 
 	init.
 
 This initializes the cache, downloading all course pages.
 
-(2) Each year, you should run 
+- (2) Each year, you should run 
 
 	new_year.
 
 This incrementally caches the course pages of the new academic year.
 
-(3) When you want to see details and statistics for a book for a specific academic year:
+- (3) When you want to see details and statistics for a book for a specific academic year:
 
 	find_book(+BooksEvdoxusIDs,+AcademicYear,+Options).
 
@@ -44,7 +44,7 @@ or
 
 This is equivalent to find_book(BooksEvdoxusIDs,AcademicYear,[]).
 
-(4) When you want to find out only the statistics for a book for a specific academic year:
+- (4) When you want to find out only the statistics for a book for a specific academic year:
 
 	book_stats_year(+BooksEvdoxusIDs,+AcademicYear,-Stats,+Options).
 
@@ -58,7 +58,7 @@ e.g.
 	?- book_stats_year('94700120',2022-2023,Stats,[cache]).
 	Stats = 21-58-87.
 
-(5) When you want to find out the statistics for a book for several academic years:
+- (5) When you want to find out the statistics for a book for several academic years:
 
 	book_stats(+BooksEvdoxusIDs,+Year1,+Year2,-Stats,+Options).
 
@@ -66,7 +66,7 @@ Returns at Stats argument the statistics about a book or a list of books
 aggregatively for all the academic years between Year1 and Year2, in a list of
 the form:
 
-[AcademicYear1/NoOfUniversities1-NoOfDepartments1-NoOfModules1, ..., AcademicYearN/NoOfUniversitiesN-NoOfDepartmentsN-NoOfModulesN]
+	[AcademicYear1/NoOfUniversities1-NoOfDepartments1-NoOfModules1, ..., AcademicYearN/NoOfUniversitiesN-NoOfDepartmentsN-NoOfModulesN]
 
 Year1 and Year2 are integers (e.g. 2020, 2023, ...). 
 The rest of the arguments have exactly the same meaning as with find_book/3.
@@ -76,7 +76,7 @@ e.g.
 	?- book_stats(['94700120','12867416'],2019,2023,Stats,[cache]).
 	Stats = [2019-2020/(20-42-64), 2020-2021/(21-49-77), 2021-2022/(20-54-87), 2022-2023/(21-58-87)].
 
-(6) When you want to compare the statistics for a book for two academic years,
+- (6) When you want to compare the statistics for a book for two academic years,
 i.e. which Universities/Departments/Modules have been added in the second
 academic year compared to the first and which Universities/Departments/Modules
 in the first academic year have been deleted from the second:
@@ -98,7 +98,7 @@ e.g.
 
 (The filename that the results are stored is 'comp-results-2021-2022-2022-2023-94700120.txt')
 
-(7) When you want to retrieve (in lists) the statistics for a book for two
+- (7) When you want to retrieve (in lists) the statistics for a book for two
 academic years, i.e. which Universities (including details about Departments/
 Modules) have been added in the second academic year compared to the first and
 which Universities (including details about Departments/Modules) in the first
@@ -125,7 +125,7 @@ e.g.
 This means that no University has been deleted and one has been added (with the
 specific Department and Module).
 
-(8) When you want to retrieve (in lists) the statistics for a book for two
+- (8) When you want to retrieve (in lists) the statistics for a book for two
 academic years, i.e. which Departments (including details about University/
 Modules) have been added in the second academic year compared to the first and
 which Departments (including details about University/Modules) in the first
@@ -154,7 +154,7 @@ e.g.
 This means that no Department has been deleted and 4 have been added (from the
 specific Universities and with the specific Modules).
 
-(9) When you want to retrieve (in lists) the statistics for a book for two
+- (9) When you want to retrieve (in lists) the statistics for a book for two
 academic years, i.e. which Modules (including details about University/
 Department) have been added in the second academic year compared to the first and
 which Modules (including details about University/Department) in the first
@@ -191,7 +191,7 @@ e.g.
 
 This means that 9 Modules have been deleted and 9 have been added (from the specific Universities and Departments).
 
-(10) When you want to compare details and statistics for multiple books for a specific academic year:
+- (10) When you want to compare details and statistics for multiple books for a specific academic year:
 
 	compare_books(+ListofListsOfBookIDs,+AcademicYear,+Options).
 	
@@ -209,7 +209,7 @@ e.g.
 
 (The filename that the results are stored is 'mult-results-2022-2023-94700120-102070469-13909.txt')
 
-(11) When you want to compare statistics for multiple books for a specific academic year:
+- (11) When you want to compare statistics for multiple books for a specific academic year:
 
 	 compare_books_stats(+ListofListsOfBookIDs,+AcademicYear,-Stats,+Options).
 	 
