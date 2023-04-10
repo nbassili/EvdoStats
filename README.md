@@ -30,8 +30,11 @@ Options is a list (possibly empty) containing the following:
    - silent: do not print results on-screen (only at file)
 
 e.g. 
+
 	?- find_book('94700120',2022-2023,[cache,silent]).
+
 or   
+
 	?- find_book(['94700120'],2022-2023,[cache,silent]).
 
 (The filename that results are stored is 'results-2022-2023-94700120.txt').
@@ -50,6 +53,7 @@ aggregatively for an academic year, in the form: NoOfUniversities - NoOfDepartme
 The rest of the arguments have exactly the same meaning as with find_book/3.
 
 e.g. 
+
 	?- book_stats_year('94700120',2022-2023,Stats,[cache]).
 	Stats = 21-58-87.
 
@@ -67,6 +71,7 @@ Year1 and Year2 are integers (e.g. 2020, 2023, ...).
 The rest of the arguments have exactly the same meaning as with find_book/3.
 
 e.g.
+
 	?- book_stats(['94700120','12867416'],2019,2023,Stats,[cache]).
 	Stats = [2019-2020/(20-42-64), 2020-2021/(21-49-77), 2021-2022/(20-54-87), 2022-2023/(21-58-87)].
 
@@ -87,6 +92,7 @@ stored at a file with name 'comp-results-<<AcademicYear1>>-<<AcademicYear2>>-<<B
 The arguments have exactly the same meaning as with find_book/3.
 
 e.g. 
+
 	?- compare_years('94700120',2021-2022,2022-2023,[cache]).
 
 (The filename that the results are stored is 'comp-results-2021-2022-2022-2023-94700120.txt')
@@ -109,6 +115,7 @@ second, returning two lists Added and Deleted.
 The arguments have exactly the same meaning as with find_book/3.
 
 e.g. 
+
 	?- compare_years_univ_list(['94700120'],2021-2022,2022-2023,L1,L2,[cache]).
 	L1 = [],
 	L2 = ['ΕΘΝΙΚΟ ΜΕΤΣΟΒΙΟ ΠΟΛΥΤΕΧΝΕΙΟ'-'ΜΗΧΑΝΙΚΩΝ ΜΕΤΑΛΛΕΙΩΝ ΜΕΤΑΛΛΟΥΡΓΩΝ'-1/
@@ -135,6 +142,7 @@ second, returning two lists Added and Deleted.
 The arguments have exactly the same meaning as with find_book/3.
 
 e.g. 
+
 	?- compare_years_dept_list(['94700120'],2021-2022,2022-2023,L1,L2,[cache]).
 	L1 = [],
 	L2 = ['ΕΘΝΙΚΟ & ΚΑΠΟΔΙΣΤΡΙΑΚΟ ΠΑΝΕΠΙΣΤΗΜΙΟ ΑΘΗΝΩΝ'-'ΜΑΘΗΜΑΤΙΚΩΝ'-1/["ΤΕΧΝΗΤΗ ΝΟΗΜΟΣΥΝΗ"], 
@@ -163,6 +171,7 @@ second, returning two lists Added and Deleted.
 The arguments have exactly the same meaning as with find_book/3.
 
 e.g. 
+
 	?- compare_years_module_list(['94700120'],2021-2022,2022-2023,L1,L2,[cache]).
 	L1 = ['ΕΘΝΙΚΟ & ΚΑΠΟΔΙΣΤΡΙΑΚΟ ΠΑΝΕΠΙΣΤΗΜΙΟ ΑΘΗΝΩΝ'-'ΔΙΟΙΚΗΣΗΣ ΕΠΙΧΕΙΡΗΣΕΩΝ ΚΑΙ ΟΡΓΑΝΙΣΜΩΝ'-1/["ΤΕΧΝΗΤΗ ΝΟΗΜΟΣΥΝΗ"], 
 	'ΕΘΝΙΚΟ & ΚΑΠΟΔΙΣΤΡΙΑΚΟ ΠΑΝΕΠΙΣΤΗΜΙΟ ΑΘΗΝΩΝ'-'ΠΛΗΡΟΦΟΡΙΚΗΣ ΚΑΙ ΤΗΛΕΠΙΚΟΙΝΩΝΙΩΝ'-1/["ΗΛΕΚΤΡΟΜΑΓΝΗΤΙΣΜΟΣ-ΟΠΤΙΚΗ-ΣΥΓΧΡΟΝΗ ΦΥΣΙΚΗ"], 
@@ -194,6 +203,7 @@ The results are shown on-screen, unless options silent is used, and stored at a 
 'mult-results-<<AcademicYear>>-<<ListofListsOfBookIDs>>.txt'.
 
 e.g. 
+
 	?- compare_books([['94700120'],['102070469','13909']],2022-2023,[cache]).
 
 (The filename that the results are stored is 'mult-results-2022-2023-94700120-102070469-13909.txt')
@@ -207,6 +217,7 @@ which is the variable where the result (a list) of the aggregative statistics of
 is returned. Each member of the Stats list has the format NumberOfUniversities-NumberOfDepartments-NumberOfModules.
 
 e.g.
+
 	?- compare_books_stats([['94700120'],['102070469','13909']],2022-2023,S,[cache]).
 	S = [21-58-87, 19-61-89].
 
