@@ -2,8 +2,8 @@
 :- use_module(library(sgml)).
 :- use_module(library(xpath)).
 
-% :- find_book('12867416',2019-2020).  %v3
-% :- find_book('94700120',2022-2023).  %v4
+% :- book_details_year('12867416',2019-2020,[cache]).  %v3
+% :- book_details_year('94700120',2022-2023,[cache]).  %v4
 %  25585  - Γκιούρδας %v4
 
 :- dynamic course/4, cached_course/4.
