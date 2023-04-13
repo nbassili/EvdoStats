@@ -22,7 +22,7 @@ This incrementally caches the course pages of the new academic year.
 - (3) When you want to see details and statistics for a book for a specific academic year:
 
 
-		find_book(+BooksEvdoxusIDs,+AcademicYear,+Options).
+		book_details_year(+BooksEvdoxusIDs,+AcademicYear,+Options).
 		
 
 Provides statistics for a single or multiple books, i.e. at which Universities,
@@ -38,17 +38,17 @@ Options is a list (possibly empty) containing the following:
 
 e.g. 
 
-		?- find_book('94700120',2022-2023,[cache,silent]).
+		?- book_details_year('94700120',2022-2023,[cache,silent]).
 
 or   
 
-		?- find_book(['94700120'],2022-2023,[cache,silent]).
+		?- book_details_year(['94700120'],2022-2023,[cache,silent]).
 
 (The filename that results are stored is 'results-2022-2023-94700120.txt').
 
-		find_book(BooksEvdoxusIDs,AcademicYear).
+		book_details_year(BooksEvdoxusIDs,AcademicYear).
 
-This is equivalent to find_book(BooksEvdoxusIDs,AcademicYear,[]).
+This is equivalent to book_details_year(BooksEvdoxusIDs,AcademicYear,[]).
 
 - (4) When you want to find out only the statistics for a book for a specific academic year:
 
@@ -58,7 +58,7 @@ This is equivalent to find_book(BooksEvdoxusIDs,AcademicYear,[]).
 Returns at Stats argument the statistics about a book or a list of books
 aggregatively for an academic year, in the form: NoOfUniversities - NoOfDepartments - NoOfModules
 
-The rest of the arguments have exactly the same meaning as with find_book/3.
+The rest of the arguments have exactly the same meaning as with book_details_year/3.
 
 e.g. 
 
@@ -77,7 +77,7 @@ the form:
 		[AcademicYear1/NoOfUniversities1-NoOfDepartments1-NoOfModules1, ..., AcademicYearN/NoOfUniversitiesN-NoOfDepartmentsN-NoOfModulesN]
 
 Year1 and Year2 are integers (e.g. 2020, 2023, ...). 
-The rest of the arguments have exactly the same meaning as with find_book/3.
+The rest of the arguments have exactly the same meaning as with book_details_year/3.
 
 e.g.
 
@@ -99,7 +99,7 @@ year compared to the first and which Universities/Departments/Modules in the
 first academic year have been deleted from the second, on-screen (optional) and
 stored at a file with name 'comp-results-<<AcademicYear1>>-<<AcademicYear2>>-<<BooksEvdoxusIDs>>.txt'.
 
-The arguments have exactly the same meaning as with find_book/3.
+The arguments have exactly the same meaning as with book_details_year/3.
 
 e.g. 
 
@@ -123,7 +123,7 @@ academic year compared to the first and which Universities (including details
 about Departments/Modules) in the first academic year have been deleted from the
 second, returning two lists Added and Deleted.
 
-The arguments have exactly the same meaning as with find_book/3.
+The arguments have exactly the same meaning as with book_details_year/3.
 
 e.g. 
 
@@ -151,7 +151,7 @@ academic year compared to the first and which Departments (including details
 about University/Modules) in the first academic year have been deleted from the
 second, returning two lists Added and Deleted.
 
-The arguments have exactly the same meaning as with find_book/3.
+The arguments have exactly the same meaning as with book_details_year/3.
 
 e.g. 
 
@@ -181,7 +181,7 @@ academic year compared to the first and which Modules (including details
 about University/Department) in the first academic year have been deleted from the
 second, returning two lists Added and Deleted.
 
-The arguments have exactly the same meaning as with find_book/3.
+The arguments have exactly the same meaning as with book_details_year/3.
 
 e.g. 
 
@@ -209,10 +209,10 @@ This means that 9 Modules have been deleted and 9 have been added (from the spec
 		compare_books(+ListofListsOfBookIDs,+AcademicYear,+Options).
 	
 ListofListsOfBookIDs is a list of lists. Each inner list is a list of Book IDs 
-whose details and statistics are aggregated (as in e.g. find_book/3).
-The rest of the arguments are exactly as in find_book/3.
+whose details and statistics are aggregated (as in e.g. book_details_year/3).
+The rest of the arguments are exactly as in book_details_year/3.
 The purpose of this predicate is to compare the "performance" of various books (or book groups) 
-against each other, much the same way as in running multiple times the find_book/3 predicate.
+against each other, much the same way as in running multiple times the book_details_year/3 predicate.
 The results are shown on-screen, unless options silent is used, and stored at a file with name 
 'mult-results-<<AcademicYear>>-<<ListofListsOfBookIDs>>.txt'.
 

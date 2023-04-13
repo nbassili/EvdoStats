@@ -16,10 +16,10 @@
 
 
 
-find_book(B,AcadYear,Options) :-
+book_details_year(B,AcadYear,Options) :-
 	not(is_list(B)), !,
-	find_book([B],AcadYear,Options).
-find_book(Bs,AcadYear,Options) :-
+	book_details_year([B],AcadYear,Options).
+book_details_year(Bs,AcadYear,Options) :-
 	(member(silent,Options) -> Silent = yes; Silent = no),
 	(Silent == yes -> true; (write('Book(s): '), write(Bs), nl, nl)),
 	find_book_list(Bs,AcadYear,List,Options),
@@ -30,8 +30,8 @@ find_book(Bs,AcadYear,Options) :-
 	atom_concat(FileName,'.txt',File),
 	write_results(File,Bs,List,NoOfUniversities,NoOfDepartments,NoOfModules), !.
 
-find_book(Bs,AcadYear) :-
-	find_book(Bs,AcadYear,[]).
+book_details_year(Bs,AcadYear) :-
+	book_details_year(Bs,AcadYear,[]).
 
 find_book_list(Bs,AcadYear,List,Options) :-
 	(member(cache,Options) -> Cache = yes; Cache = no),
