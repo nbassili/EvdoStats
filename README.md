@@ -6,14 +6,14 @@ A Prolog application for exporting statistics about book from the Evdoxus site
 - (1) When you run the Program for the first time, you should run
 
 
-	?- init.
+	?- init_cache.
 
 This initializes the cache, downloading all course pages.
 
 - (2) Each year, you should run 
 
 
-	?- new_year.
+	?- update_cache.
 
 This incrementally caches the course pages of the new academic year.
 
