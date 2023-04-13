@@ -6,7 +6,8 @@ A Prolog application for exporting statistics about book from the Evdoxus site
 - (1) When you run the Program for the first time, you should run
 
 
-	?- init_cache.
+		?- init_cache.
+		
 
 This initializes the cache, downloading all course pages.
 
