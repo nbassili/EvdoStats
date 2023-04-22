@@ -63,7 +63,7 @@ The rest of the arguments have exactly the same meaning as with book_details_yea
 e.g. 
 
 		?- book_stats_year('94700120',2022-2023,Stats,[cache]).
-		Stats = 21-58-87.
+		Stats = 21-58-83.
 
 - (5) When you want to find out the statistics for a book for several academic years:
 
@@ -82,7 +82,7 @@ The rest of the arguments have exactly the same meaning as with book_details_yea
 e.g.
 
 		?- book_stats(['94700120','12867416'],2019,2023,Stats,[cache]).
-		Stats = [2019-2020/(20-42-64), 2020-2021/(21-49-77), 2021-2022/(20-54-87), 2022-2023/(21-58-87)].
+		Stats = [2019-2020/(20-42-59), 2020-2021/(21-49-73), 2021-2022/(20-54-83), 2022-2023/(21-58-83)].
 
 - (6) When you want to compare the statistics for a book for two academic years,
 i.e. which Universities/Departments/Modules have been added in the second
@@ -234,5 +234,5 @@ is returned. Each member of the Stats list has the format NumberOfUniversities-N
 e.g.
 
 		?- compare_books_stats([['94700120'],['102070469','13909']],2022-2023,S,[cache]).
-		S = [21-58-87, 19-61-89].
+		S = [21-58-83, 19-56-82].
 

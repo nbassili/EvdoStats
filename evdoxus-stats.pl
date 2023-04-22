@@ -39,7 +39,7 @@ find_book_list(Bs,AcadYear,List,Options) :-
 	AcadYear=Year1-Year2,
 	atomic_list_concat(['Πρόγραμμα Σπουδών (',Year1,' - ',Year2,')'],CourseName),
 	dtd(html, DTD),
-	setof(University-Department-N/Modules,CourseURL^CourseFileName^CourseFilePath^In^HTML^Body^Result^Ind^Module^B^Book^(
+	setof(University-Department-N/Modules,CourseURL^CourseFileName^CourseFilePath^In^HTML^Body^Result^Ind^Module^Modules1^(
 		(Cache == yes ->
 			(cached_course(University,Department,CourseFileName,CourseName),
 			 string_concat("cache/",CourseFileName,CourseFilePath),
@@ -50,12 +50,19 @@ find_book_list(Bs,AcadYear,List,Options) :-
 		load_structure(In, HTML, [ dtd(DTD), dialect(sgml), shorttag(false), max_errors(-1),syntax_errors(quiet),encoding('utf-8') ]),
 		close(In),
 		xpath(HTML,//body,Body),
-		member(B,Bs),
-		atomic_list_concat(['[',B,']'],Book),
-		bagof(ModuleName,Ind^Result^Module^(xpath(Body, //ol(index(Ind))/li/ul/li(contains(text,Book)), Result),
-				     		    xpath(Body,//h2(index(Ind),normalize_space),Module),
-						    get_module_name(Module,ModuleName)	),
-			Modules),
+		%member(B,Bs),
+		%atomic_list_concat(['[',B,']'],Book),
+		%bagof(ModuleName,Ind^Result^Module^(xpath(Body, //ol(index(Ind))/li/ul/li(contains(text,Book)), Result),
+		%		     		    xpath(Body,//h2(index(Ind),normalize_space),Module),
+		%				    get_module_name(Module,ModuleName)	),
+		%	Modules),
+		setof(Module-ModuleName,Ind^Result^Module^B^Book^(member(B,Bs),
+						    	   atomic_list_concat(['[',B,']'],Book),
+						           xpath(Body, //ol(index(Ind))/li/ul/li(contains(text,Book)), Result),
+				     		           xpath(Body,//h2(index(Ind),normalize_space),Module),
+						           get_module_name(Module,ModuleName)	),
+			Modules1),
+		strip_modulenames(Modules1,Modules),
 		length(Modules,N),
 		(Silent == yes -> true; writelist(user,[University-Department-N/Modules]))
 	),List).
@@ -201,6 +208,10 @@ get_module_name(ModuleIn,ModuleOut) :-
 	A1 is A - 1,
 	A1 >= 0,
 	sub_string(ModuleIn,B1,A1,0,ModuleOut).
+
+strip_modulenames([],[]).
+strip_modulenames([_X-Y|T],[Y|T1]) :-
+	strip_modulenames(T,T1).
 
 write_shortlist([H]) :-
 	write(H),
