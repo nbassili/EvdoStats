@@ -50,12 +50,6 @@ find_book_list(Bs,AcadYear,List,Options) :-
 		load_structure(In, HTML, [ dtd(DTD), dialect(sgml), shorttag(false), max_errors(-1),syntax_errors(quiet),encoding('utf-8') ]),
 		close(In),
 		xpath(HTML,//body,Body),
-		%member(B,Bs),
-		%atomic_list_concat(['[',B,']'],Book),
-		%bagof(ModuleName,Ind^Result^Module^(xpath(Body, //ol(index(Ind))/li/ul/li(contains(text,Book)), Result),
-		%		     		    xpath(Body,//h2(index(Ind),normalize_space),Module),
-		%				    get_module_name(Module,ModuleName)	),
-		%	Modules),
 		setof(Module-ModuleName,Ind^Result^Module^B^Book^(member(B,Bs),
 						    	   atomic_list_concat(['[',B,']'],Book),
 						           xpath(Body, //ol(index(Ind))/li/ul/li(contains(text,Book)), Result),
@@ -177,6 +171,9 @@ compare_books(Bs, AcadYear, Options) :-
 	atom_concat(FileName,'.txt',File),
 	write_mult_results(File,Bs, ListOfLists,ListOfUDM), !.
 
+compare_books(Bs, AcadYear) :-
+	compare_books(Bs, AcadYear, []).
+
 compare_books_aux([], _AcadYear, _Options, [], []).
 compare_books_aux([B|RestB], AcadYear, Options, [List1|RestLoL], [NoOfUniversities-NoOfDepartments-NoOfModules|RestUDM]) :-
 	(member(silent,Options) -> Silent = yes; Silent = no),
@@ -189,6 +186,8 @@ compare_books_aux([B|RestB], AcadYear, Options, [List1|RestLoL], [NoOfUniversiti
 compare_books_stats(Bs, AcadYear, ListOfUDM, Options) :-
 	compare_books_aux(Bs, AcadYear, [silent|Options], _ListOfLists, ListOfUDM).
 
+compare_books_stats(Bs, AcadYear, ListOfUDM) :-
+	compare_books_stats(Bs, AcadYear, ListOfUDM, []).
 
 write_mult_results(File,Bs, ListOfLists,ListOfUDM) :-
 	open(File,write,Res,[encoding(utf8)]),
