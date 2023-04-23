@@ -15,7 +15,6 @@
 :- endif.
 
 
-
 book_details_year(B,AcadYear,Options) :-
 	not(is_list(B)), !,
 	book_details_year([B],AcadYear,Options).
@@ -89,12 +88,16 @@ collect_two_years(Bs, AcYear1, AcYear2, List1, List2, Options) :-
 	find_book_list(Bs, AcYear1, List1, [silent|Options]),
 	find_book_list(Bs, AcYear2, List2, [silent|Options]).
 
-
+compare_years_module_list(B, Year1, Year2, Deleted, Added, Options) :-
+	not(is_list(B)), !,
+	compare_years_module_list([B], Year1, Year2, Deleted, Added, Options).
 compare_years_module_list(Bs, Year1, Year2, Deleted, Added, Options) :-
 	collect_two_years(Bs, Year1, Year2, List1, List2, Options),
 	find_differences_module(List1,List2,Deleted),
 	find_differences_module(List2,List1,Added).
 
+compare_years_module_list(Bs, Year1, Year2, Deleted, Added) :-
+	compare_years_module_list(Bs, Year1, Year2, Deleted, Added, []).
 
 find_differences_module(List1,List2,AllDiffs) :-
 	find_differences_dept(List1,List2,DeptDiffs),
@@ -108,20 +111,32 @@ find_differences_module(List1,List2,AllDiffs) :-
 	append(DeptDiffs,RestDiffs,AllDiffs).
 
 
+compare_years_dept_list(B, Year1, Year2, Deleted, Added, Options) :-
+	not(is_list(B)), !,
+	compare_years_dept_list([B], Year1, Year2, Deleted, Added, Options).
 compare_years_dept_list(Bs, Year1, Year2, Deleted, Added, Options) :-
 	collect_two_years(Bs, Year1, Year2, List1, List2, Options),
 	find_differences_dept(List1,List2,Deleted),
 	find_differences_dept(List2,List1,Added).
+
+compare_years_dept_list(Bs, Year1, Year2, Deleted, Added) :-
+	compare_years_dept_list(Bs, Year1, Year2, Deleted, Added, []).
 
 
 find_differences_dept(List1,List2,Diffs) :-
 	findall(U-D-N/M,(member(U-D-N/M,List1), not(member(U-D-_/_,List2))),Diffs).
 
 
+compare_years_univ_list(B, Year1, Year2, Deleted, Added, Options) :-
+	not(is_list(B)), !,
+	compare_years_univ_list([B], Year1, Year2, Deleted, Added, Options).
 compare_years_univ_list(Bs, Year1, Year2, Deleted, Added, Options) :-
 	collect_two_years(Bs, Year1, Year2, List1, List2, Options),
 	find_differences_univ(List1,List2,Deleted),
 	find_differences_univ(List2,List1,Added).
+
+compare_years_univ_list(Bs, Year1, Year2, Deleted, Added) :-
+	compare_years_univ_list(Bs, Year1, Year2, Deleted, Added, []).
 
 
 find_differences_univ(List1,List2,Diffs) :-
@@ -208,11 +223,18 @@ compare_books_diff(Bs, AcadYear, Options) :-
 	atom_concat(FileName,'.txt',File),
 	write_comparison_results(File,Bs,Phr1,Phr2,U1,Dept1,Mod1,NoOfUniversities1,NoOfDepartments1,NoOfModules1,U2,Dept2,Mod2,NoOfUniversities2,NoOfDepartments2,NoOfModules2, Options), !.
 
+compare_books_diff(Bs, AcadYear) :-
+	compare_books_diff(Bs, AcadYear, []).
+
+
 compare_books_univ_list(Bs, AcadYear, U1, U2, Options) :-
 	Bs = [_B1,_B2],
 	compare_books_aux(Bs, AcadYear, Options, [List1,List2],_),
 	find_differences_univ(List1,List2,U1),
 	find_differences_univ(List2,List1,U2).
+
+compare_books_univ_list(Bs, AcadYear, U1, U2) :-
+	compare_books_univ_list(Bs, AcadYear, U1, U2, []).
 
 compare_books_dept_list(Bs, AcadYear, D1, D2, Options) :-
 	Bs = [_B1,_B2],
@@ -220,15 +242,20 @@ compare_books_dept_list(Bs, AcadYear, D1, D2, Options) :-
 	find_differences_dept(List1,List2,D1),
 	find_differences_dept(List2,List1,D2).
 
+compare_books_dept_list(Bs, AcadYear, D1, D2) :-
+	compare_books_dept_list(Bs, AcadYear, D1, D2, []).
+
 compare_books_module_list(Bs, AcadYear, M1, M2, Options) :-
 	Bs = [_B1,_B2],
 	compare_books_aux(Bs, AcadYear, Options, [List1,List2],_),
 	find_differences_module(List1,List2,M1),
 	find_differences_module(List2,List1,M2).
 
+compare_books_module_list(Bs, AcadYear, M1, M2) :-
+	compare_books_module_list(Bs, AcadYear, M1, M2, []).
 
 compare_books_stats(Bs, AcadYear, ListOfUDM, Options) :-
-	compare_books_aux(Bs, AcadYear, [silent|Options], _ListOfLists, ListOfUDM).
+	compare_books_aux(Bs, AcadYear, Options, _ListOfLists, ListOfUDM).
 
 compare_books_stats(Bs, AcadYear, ListOfUDM) :-
 	compare_books_stats(Bs, AcadYear, ListOfUDM, []).
