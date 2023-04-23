@@ -21,7 +21,6 @@ book_details_year(B,AcadYear,Options) :-
 	book_details_year([B],AcadYear,Options).
 book_details_year(Bs,AcadYear,Options) :-
 	(member(silent,Options) -> Silent = yes; Silent = no),
-	%(Silent == yes -> true; (write('Book(s): '), write(Bs), nl, nl)),
 	find_book_list(Bs,AcadYear,List,Options),
 	calc_total_results(List,NoOfUniversities,NoOfDepartments,NoOfModules),
 	(Silent == yes -> true; write_results(user,Bs,List,NoOfUniversities,NoOfDepartments,NoOfModules,Options)),
@@ -35,7 +34,6 @@ book_details_year(Bs,AcadYear) :-
 
 find_book_list(Bs,AcadYear,List,Options) :-
 	(member(cache,Options) -> Cache = yes; Cache = no),
-	%(member(silent,Options) -> Silent = yes; Silent = no),
 	AcadYear=Year1-Year2,
 	atomic_list_concat(['Πρόγραμμα Σπουδών (',Year1,' - ',Year2,')'],CourseName),
 	dtd(html, DTD),
@@ -56,9 +54,7 @@ find_book_list(Bs,AcadYear,List,Options) :-
 				     		           xpath(Body,//h2(index(Ind),normalize_space),Module),
 						           get_module_name(Module,ModuleName,ModuleCode)	),
 			Modules),
-		%strip_modulenames(Modules1,Modules),
 		length(Modules,N)
-		%(Silent == yes -> true; writelist(user,[University-Department-N/Modules]))
 	),List).
 
 % :- book_stats_year('94700120',2022-2023,Stats).  %v4
@@ -239,15 +235,6 @@ compare_books_stats(Bs, AcadYear, ListOfUDM) :-
 
 
 
-/*
-get_module_name(ModuleIn,ModuleOut) :-
-	sub_string(ModuleIn,B,_L,A,":"),
-	B1 is B+2,
-	A1 is A - 1,
-	A1 >= 0,
-	sub_string(ModuleIn,B1,A1,0,ModuleOut).
-*/
-
 get_module_name(FullModuleName,ModuleName,ModuleCode) :-
 	sub_string(FullModuleName,B,_L,A,":"),
 	B1 is B+2,
@@ -256,18 +243,6 @@ get_module_name(FullModuleName,ModuleName,ModuleCode) :-
 	sub_string(FullModuleName,B1,A1,0,ModuleName),
 	A2 is A + 2,
 	sub_string(FullModuleName,8,_,A2,ModuleCode), !.
-
-strip_modulenames([],[]).
-strip_modulenames([_X-Y|T],[Y|T1]) :-
-	strip_modulenames(T,T1).
-
-write_shortlist([H]) :-
-	write(H),
-	write('.'), !.
-write_shortlist([H|T]) :-
-	write(H),
-	write(', '),
-	write_shortlist(T).
 
 writelist(_,[],_).
 writelist(F,[U-D-N/Modules|T],Options) :-
@@ -358,12 +333,6 @@ inc_cache_courses_aux :-
 	write('.'), nl,
 	fail; true.
 
-strings_to_atoms([],[]).
-strings_to_atoms([S|RestS],[A|RestA]) :-
-	atom_string(A,S),
-	strings_to_atoms(RestS,RestA).
-
-
 calc_total_results([],0,0,0) :- !.
 calc_total_results(List,NoOfUniversities,NoOfDepartments,NoOfModules) :-
 	setof(University,Department^Modules^member(University-Department-Modules,List),Universities),
@@ -417,10 +386,10 @@ write_mult_results_aux(File,[B|RestB],[List|RListOfLists],[U-D-M|RListOfUDM], Op
 	writelist(File,List, Options),
 	write_total_results(File,U,D,M),
 	write_mult_results_aux(File,RestB,RListOfLists,RListOfUDM, Options).
+
 /*
 extract courses from web page directly
 */
-
 
 init_cache :-
 	( exists_file('courses.pl') ->
